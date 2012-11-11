@@ -1317,7 +1317,7 @@ bool loadPropulsionStats(const char *pFileName)
 bool loadSensorStats(const char *pFileName)
 {
 	SENSOR_STATS sStats, * const psStats = &sStats;
-	char *GfxFile, *mountGfx, *location, *type;
+	char *SensorName, *GfxFile, *mountGfx, *location, *type;
 
 	WzConfig ini(pFileName);
 	if (ini.status() != QSettings::NoError)
@@ -1329,7 +1329,7 @@ bool loadSensorStats(const char *pFileName)
 	{
 		return false;
 	}
-	// Hack to make sure ZNULLBRAIN is always first in list
+	// Hack to make sure ZNULLSENSOR is always first in list
 	int nullsensor = list.indexOf("ZNULLSENSOR");
 	ASSERT_OR_RETURN(false, nullsensor >= 0, "ZNULLSENSOR is mandatory");
 	if (nullsensor > 0)
@@ -1341,7 +1341,7 @@ bool loadSensorStats(const char *pFileName)
 	{
 		ini.beginGroup(list[i]);
 		memset(psStats, 0, sizeof(SENSOR_STATS));
-		psStats->pName = strdup(list[i].toUtf8().constData());
+		SensorName = strdup(list[i].toUtf8().constData());
 		psStats->buildPower = ini.value("buildPower", 0).toInt();
 		psStats->buildPoints = ini.value("buildPoints", 0).toInt();
 		psStats->weight = ini.value("weight", 0).toInt();
@@ -1355,7 +1355,7 @@ bool loadSensorStats(const char *pFileName)
 		psStats->power = ini.value("power").toInt();
 		psStats->designable = ini.value("designable").toBool();
 
-		if (!allocateStatName((BASE_STATS *)psStats, psStats->pName))
+		if (!allocateStatName((BASE_STATS *)psStats, SensorName))
 		{
 			return false;
 		}
@@ -1404,6 +1404,7 @@ bool loadSensorStats(const char *pFileName)
 		//multiply time stats
 		psStats->time *= WEAPON_TIME;
 
+		//get the IMD for the component
 		if (strcmp(GfxFile, "0"))
 		{
 			psStats->pIMD = (iIMDShape *) resGetData("IMD", GfxFile);
@@ -1432,8 +1433,6 @@ bool loadSensorStats(const char *pFileName)
 		{
 			psStats->pMountGraphic = NULL;
 		}
-
-		//get the IMD for the component
 
 		ini.endGroup();
 		//save the stats
@@ -1569,6 +1568,13 @@ bool loadRepairStats(const char *pFileName)
 	if (!statsAllocRepair(list.size()))
 	{
 		return false;
+	}
+	// Hack to make sure ZNULLREPAIR is always first in list
+	int nullrepair = list.indexOf("ZNULLREPAIR");
+	ASSERT_OR_RETURN(false, nullrepair >= 0, "ZNULLREPAIR is mandatory");
+	if (nullrepair > 0)
+	{
+		list.swap(nullrepair, 0);
 	}
 
 	for (int i=0; i < list.size(); ++i)
