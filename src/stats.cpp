@@ -1761,13 +1761,13 @@ bool loadConstructStats(const char *pFileName)
 
 
 /*Load the Propulsion Types from the file exported from Access*/
-bool loadPropulsionTypes(const char *pPropTypeData, UDWORD bufferSize)
+bool loadPropulsionTypes(const char *pFileName)
 {
 	const unsigned int NumTypes = PROPULSION_TYPE_NUM;
 	PROPULSION_TYPES *pPropType;
-	unsigned int i, multiplier;
+	unsigned int multiplier;
 	PROPULSION_TYPE type;
-	char PropulsionName[MAX_STR_LENGTH], flightName[MAX_STR_LENGTH];
+	char *PropulsionName, *flightName;
 
 	//allocate storage for the stats
 	asPropulsionTypes = (PROPULSION_TYPES *)malloc(sizeof(PROPULSION_TYPES)*NumTypes);
@@ -1779,12 +1779,19 @@ bool loadPropulsionTypes(const char *pPropTypeData, UDWORD bufferSize)
 	}
 
 	memset(asPropulsionTypes, 0, (sizeof(PROPULSION_TYPES)*NumTypes));
-
-	for (i=0; i < NumTypes; i++)
+	WzConfig ini(pFileName);
+	if (ini.status() != QSettings::NoError)
 	{
-		//read the data into the storage - the data is delimeted using comma's
-		sscanf(pPropTypeData,"%255[^,'\r\n],%255[^,'\r\n],%d",
-			PropulsionName, flightName, &multiplier);
+		debug(LOG_ERROR, "Could not open %s", pFileName);
+	}
+	QStringList list = ini.childGroups();
+
+	for (int i=0; i < NumTypes; ++i)
+	{
+		ini.beginGroup(list[i]);
+		PropulsionName = strdup(list[i].toUtf8().constData());
+		flightName = strdup(ini.value("flightName").toString().toUtf8().constData());
+		multiplier = ini.value("multiplier").toInt();
 
 		//set the pointer for this record based on the name
 		if (!getPropulsionType(PropulsionName, &type))
@@ -1809,14 +1816,14 @@ bool loadPropulsionTypes(const char *pPropTypeData, UDWORD bufferSize)
 			ASSERT( false, "Invalid travel type for Propulsion" );
 		}
 
-        //don't care about this anymore! AB FRIDAY 13/11/98
-        //want it back again! AB 27/11/98
-        if (multiplier > UWORD_MAX)
-        {
-            ASSERT( false, "loadPropulsionTypes: power Ratio multiplier too high" );
-            //set to a default value since not life threatening!
-            multiplier = 100;
-        }
+		//don't care about this anymore! AB FRIDAY 13/11/98
+		//want it back again! AB 27/11/98
+		if (multiplier > UWORD_MAX)
+		{
+			ASSERT( false, "loadPropulsionTypes: power Ratio multiplier too high" );
+			//set to a default value since not life threatening!
+			multiplier = 100;
+		}
 		pPropType->powerRatioMult = (UWORD)multiplier;
 
 		//initialise all the sound variables
@@ -1827,8 +1834,7 @@ bool loadPropulsionTypes(const char *pPropTypeData, UDWORD bufferSize)
 		pPropType->hissID = NO_SOUND;
 		pPropType->shutDownID = NO_SOUND;
 
-		//increment the pointer to the start of the next record
-		pPropTypeData = strchr(pPropTypeData,'\n') + 1;
+		ini.endGroup();
 	}
 
 	return true;

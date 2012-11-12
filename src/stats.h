@@ -176,7 +176,7 @@ extern bool loadRepairStats(const char *pFileName);
 extern bool loadConstructStats(const char *pFileName);
 
 /*Load the Propulsion Types from the file exported from Access*/
-extern bool loadPropulsionTypes(const char *pPropTypeData, UDWORD bufferSize);
+extern bool loadPropulsionTypes(const char *pFileName);
 
 /*Load the propulsion sounds from the file exported from Access*/
 extern bool loadPropulsionSounds(const char *pSoundData, UDWORD bufferSize);

@@ -256,11 +256,9 @@ static bool bufferSBRAINLoad(const char *fileName, void **ppData)
 }
 
 /* Load the PropulsionType stats */
-static bool bufferSPROPTYPESLoad(const char *pBuffer, UDWORD size, void **ppData)
+static bool bufferSPROPTYPESLoad(const char *fileName, void **ppData)
 {
-	calcDataHash((uint8_t *)pBuffer, size, DATA_SPROPTY);
-
-	if (!loadPropulsionTypes(pBuffer, size))
+	if (!loadPropulsionTypes(fileName))
 	{
 		return false;
 	}
@@ -1063,7 +1061,6 @@ struct RES_TYPE_MIN_BUF
 static const RES_TYPE_MIN_BUF BufferResourceTypes[] =
 {
 	{"SWEAPON", bufferSWEAPONLoad, NULL},
-	{"SPROPTYPES", bufferSPROPTYPESLoad, NULL},
 	{"SPROPSND", bufferSPROPSNDLoad, NULL},
 	{"STERRTABLE", bufferSTERRTABLELoad, NULL},
 	{"SBPIMD", bufferSBPIMDLoad, NULL},
@@ -1105,6 +1102,7 @@ static const RES_TYPE_MIN_FILE FileResourceTypes[] =
 	{"SREPAIR", bufferSREPAIRLoad, dataReleaseStats},
 	{"SCONSTR", bufferSCONSTRLoad, dataReleaseStats},
 	{"SPROP", bufferSPROPLoad, dataReleaseStats},
+	{"SPROPTYPES", bufferSPROPTYPESLoad, dataReleaseStats},
 	{"SBODY", bufferSBODYLoad, dataReleaseStats},
 	{"AUDIOCFG", dataAudioCfgLoad, NULL},
 	{"ANI", dataAnimLoad, dataAnimRelease},
