@@ -1690,7 +1690,13 @@ bool loadConstructStats(const char *pFileName)
 	{
 		return false;
 	}
-
+	// Hack to make sure ZNULLCONSTRUCT is always first in list
+	int nullconstruct = list.indexOf("ZNULLCONSTRUCT");
+	ASSERT_OR_RETURN(false, nullconstruct >= 0, "ZNULLCONSTRUCT is mandatory");
+	if (nullconstruct > 0)
+	{
+		list.swap(nullconstruct, 0);
+	}
 	for (int i=0; i < list.size(); ++i)
 	{
 		ini.beginGroup(list[i]);
@@ -1842,11 +1848,10 @@ bool loadPropulsionTypes(const char *pFileName)
 
 
 /*Load the Terrain Table from the file exported from Access*/
-bool loadTerrainTable(const char *pTerrainTableData, UDWORD bufferSize)
+bool loadTerrainTable(const char *pFileName)
 {
-	const unsigned int NumEntries = numCR(pTerrainTableData, bufferSize);
-	unsigned int i;
-	UDWORD			terrainType, propulsionType, speedFactor;
+	UDWORD	terrainType;
+	QString propulsionType, speedFactor;
 
 	//allocate storage for the stats
 	asTerrainTable = (TERRAIN_TABLE *)malloc(sizeof(*asTerrainTable) * PROPULSION_TYPE_NUM * TER_MAX);
@@ -1861,31 +1866,39 @@ bool loadTerrainTable(const char *pTerrainTableData, UDWORD bufferSize)
 	//initialise the storage to 100
 	for (i = 0; i < TER_MAX; ++i)
 	{
-		unsigned int j;
-		for (j = 0; j < PROPULSION_TYPE_NUM; j++)
+		for (int j = 0; j < PROPULSION_TYPE_NUM; ++j)
 		{
 			TERRAIN_TABLE * const pTerrainTable = &asTerrainTable[i * PROPULSION_TYPE_NUM + j];
 			pTerrainTable->speedFactor = 100;
 		}
 	}
-
-	for (i = 0; i < NumEntries; ++i)
+	WzConfig ini(pFileName);
+	if (ini.status() != QSettings::NoError)
 	{
-		//read the data into the storage - the data is delimeted using comma's
-		sscanf(pTerrainTableData,"%d,%d,%d",
-			&terrainType, &propulsionType, &speedFactor);
-		//store the speed factor at the correct location from the start
-		storeSpeedFactor(terrainType, propulsionType, speedFactor);
-		//increment the pointer to the start of the next record
-		pTerrainTableData = strchr(pTerrainTableData,'\n') + 1;
+		debug(LOG_ERROR, "Could not open %s", pFileName);
+	}
+	QStringList list = ini.childGroups();
+	for (i = 0; i < list.size(); ++i)
+	{
+		ini.beginGroup(list[i]);
+		terrainType = list[i].toUInt();
+		propulsionType = ini.value("propulsionType").toString();
+		speedFactor = ini.value("speedFactor").toString();
+		QStringList propulsionTypes = propulsionType.split(",");
+		QStringList speedFactors = speedFactor.split(",");
+
+		for (int x=0; x< propulsionType.size(); ++x)
+		{
+			storeSpeedFactor(terrainType, propulsionTypes[x].toUInt(), speedFactors[x].toUInt());
+		}
+		ini.endGroup();
 	}
 
 	//check that none of the entries are 0 otherwise this will stop a droid dead in its tracks
 	//and it will not be able to move again!
 	for (i = 0; i < TER_MAX; ++i)
 	{
-		unsigned int j;
-		for (j = 0; j < PROPULSION_TYPE_NUM; ++j)
+		for (int j = 0; j < PROPULSION_TYPE_NUM; ++j)
 		{
 			TERRAIN_TABLE * const pTerrainTable = asTerrainTable + (i * PROPULSION_TYPE_NUM + j);
 			if (pTerrainTable->speedFactor == 0)

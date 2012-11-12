@@ -182,7 +182,7 @@ extern bool loadPropulsionTypes(const char *pFileName);
 extern bool loadPropulsionSounds(const char *pSoundData, UDWORD bufferSize);
 
 /*Load the Terrain Table from the file exported from Access*/
-extern bool loadTerrainTable(const char *pTerrainTableData, UDWORD bufferSize);
+extern bool loadTerrainTable(const char *pFileName);
 
 /* load the IMDs to use for each body-propulsion combination */
 extern bool loadBodyPropulsionIMDs(const char *pData, UDWORD bufferSize);

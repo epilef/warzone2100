@@ -283,11 +283,9 @@ static bool bufferSPROPSNDLoad(const char *pBuffer, UDWORD size, void **ppData)
 }
 
 /* Load the STERRTABLE stats */
-static bool bufferSTERRTABLELoad(const char *pBuffer, UDWORD size, void **ppData)
+static bool bufferSTERRTABLELoad(const char *fileName, void **ppData)
 {
-	calcDataHash((uint8_t *)pBuffer, size, DATA_STERRT);
-
-	if (!loadTerrainTable(pBuffer, size))
+	if (!loadTerrainTable(fileName))
 	{
 		return false;
 	}
@@ -1062,7 +1060,6 @@ static const RES_TYPE_MIN_BUF BufferResourceTypes[] =
 {
 	{"SWEAPON", bufferSWEAPONLoad, NULL},
 	{"SPROPSND", bufferSPROPSNDLoad, NULL},
-	{"STERRTABLE", bufferSTERRTABLELoad, NULL},
 	{"SBPIMD", bufferSBPIMDLoad, NULL},
 	{"SWEAPSND", bufferSWEAPSNDLoad, NULL},
 	{"SWEAPMOD", bufferSWEAPMODLoad, NULL},
@@ -1103,6 +1100,7 @@ static const RES_TYPE_MIN_FILE FileResourceTypes[] =
 	{"SCONSTR", bufferSCONSTRLoad, dataReleaseStats},
 	{"SPROP", bufferSPROPLoad, dataReleaseStats},
 	{"SPROPTYPES", bufferSPROPTYPESLoad, dataReleaseStats},
+	{"STERRTABLE", bufferSTERRTABLELoad, dataReleaseStats},
 	{"SBODY", bufferSBODYLoad, dataReleaseStats},
 	{"AUDIOCFG", dataAudioCfgLoad, NULL},
 	{"ANI", dataAnimLoad, dataAnimRelease},
