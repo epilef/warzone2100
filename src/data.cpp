@@ -177,11 +177,9 @@ static bool bufferSWEAPONLoad(const char *pBuffer, UDWORD size, void **ppData)
 }
 
 /* Load the constructor stats */
-static bool bufferSCONSTRLoad(const char *pBuffer, UDWORD size, void **ppData)
+static bool bufferSCONSTRLoad(const char *fileName, void **ppData)
 {
-	calcDataHash((uint8_t *)pBuffer, size, DATA_SCONSTR);
-
-	if (!loadConstructStats(pBuffer, size)
+	if (!loadConstructStats(fileName)
 	 || !allocComponentList(COMP_CONSTRUCT, numConstructStats))
 	{
 		return false;
@@ -193,11 +191,9 @@ static bool bufferSCONSTRLoad(const char *pBuffer, UDWORD size, void **ppData)
 }
 
 /* Load the ECM stats */
-static bool bufferSECMLoad(const char *pBuffer, UDWORD size, void **ppData)
+static bool bufferSECMLoad(const char *fileName, void **ppData)
 {
-	calcDataHash((uint8_t *)pBuffer, size, DATA_SECM);
-
-	if (!loadECMStats(pBuffer, size)
+	if (!loadECMStats(fileName)
 	 || !allocComponentList(COMP_ECM, numECMStats))
 	{
 		return false;
@@ -221,15 +217,12 @@ static bool bufferSPROPLoad(const char* fileName, void** ppData)
 	return true;
 }
 
-/* Load the Sensor stats */
-static bool bufferSSENSORLoad(const char *pBuffer, UDWORD size, void **ppData)
+static bool bufferSSENSORLoad(const char *fileName, void **ppData)
 {
-	calcDataHash((uint8_t *)pBuffer, size, DATA_SSENSOR);
-
-	if (!loadSensorStats(pBuffer, size)
+	if (!loadSensorStats(fileName)
 	 || !allocComponentList(COMP_SENSOR, numSensorStats))
 	{
-		return false;
+	        return false;
 	}
 
 	//not interested in this value
@@ -238,12 +231,9 @@ static bool bufferSSENSORLoad(const char *pBuffer, UDWORD size, void **ppData)
 }
 
 /* Load the Repair stats */
-static bool bufferSREPAIRLoad(const char *pBuffer, UDWORD size, void **ppData)
+static bool bufferSREPAIRLoad(const char *fileName, void **ppData)
 {
-	calcDataHash((uint8_t *)pBuffer, size, DATA_SREPAIR);
-
-	if (!loadRepairStats(pBuffer, size)
-	 || !allocComponentList(COMP_REPAIRUNIT, numRepairStats))
+	if (!loadRepairStats(fileName) || !allocComponentList(COMP_REPAIRUNIT, numRepairStats))
 	{
 		return false;
 	}
@@ -256,11 +246,7 @@ static bool bufferSREPAIRLoad(const char *pBuffer, UDWORD size, void **ppData)
 /* Load the Brain stats */
 static bool bufferSBRAINLoad(const char *fileName, void **ppData)
 {
-<<<<<<< HEAD
-    if (!loadBrainStats(fileName) || !allocComponentList(COMP_BRAIN, numBrainStats))
-=======
 	if (!loadBrainStats(fileName) || !allocComponentList(COMP_BRAIN, numBrainStats))
->>>>>>> ee6da7ce13f73ab47c8e83a1c59658d2d2408ac1
 	{
 		return false;
 	}
@@ -1077,10 +1063,6 @@ struct RES_TYPE_MIN_BUF
 static const RES_TYPE_MIN_BUF BufferResourceTypes[] =
 {
 	{"SWEAPON", bufferSWEAPONLoad, NULL},
-	{"SSENSOR", bufferSSENSORLoad, NULL},
-	{"SECM", bufferSECMLoad, NULL},
-	{"SREPAIR", bufferSREPAIRLoad, NULL},
-	{"SCONSTR", bufferSCONSTRLoad, NULL},
 	{"SPROPTYPES", bufferSPROPTYPESLoad, NULL},
 	{"SPROPSND", bufferSPROPSNDLoad, NULL},
 	{"STERRTABLE", bufferSTERRTABLELoad, NULL},
@@ -1118,6 +1100,10 @@ static const RES_TYPE_MIN_FILE FileResourceTypes[] =
 {
 	{"WAV", dataAudioLoad, (RES_FREE)sound_ReleaseTrack},
 	{"SBRAIN", bufferSBRAINLoad, dataReleaseStats},
+	{"SSENSOR", bufferSSENSORLoad, dataReleaseStats},
+	{"SECM", bufferSECMLoad, dataReleaseStats},
+	{"SREPAIR", bufferSREPAIRLoad, dataReleaseStats},
+	{"SCONSTR", bufferSCONSTRLoad, dataReleaseStats},
 	{"SPROP", bufferSPROPLoad, dataReleaseStats},
 	{"SBODY", bufferSBODYLoad, dataReleaseStats},
 	{"AUDIOCFG", dataAudioCfgLoad, NULL},
