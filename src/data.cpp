@@ -161,11 +161,9 @@ static void dataReleaseStats(WZ_DECL_UNUSED void *pData)
 
 
 /* Load the weapon stats */
-static bool bufferSWEAPONLoad(const char *pBuffer, UDWORD size, void **ppData)
+static bool bufferSWEAPONLoad(const char *fileName, void **ppData)
 {
-	calcDataHash((uint8_t *)pBuffer, size, DATA_SWEAPON);
-
-	if (!loadWeaponStats(pBuffer, size)
+	if (!loadWeaponStats(fileName)
 	 || !allocComponentList(COMP_WEAPON, numWeaponStats))
 	{
 		return false;
@@ -270,9 +268,9 @@ static bool bufferSPROPTYPESLoad(const char *fileName, void **ppData)
 }
 
 /* Load the propulsion type sound stats */
-static bool bufferSPROPSNDLoad(const char *pBuffer, UDWORD size, void **ppData)
+static bool bufferSPROPSNDLoad(const char *fileName, void **ppData)
 {
-	if (!loadPropulsionSounds(pBuffer, size))
+	if (!loadPropulsionSounds(fileName))
 	{
 		return false;
 	}
@@ -296,9 +294,9 @@ static bool bufferSTERRTABLELoad(const char *fileName, void **ppData)
 }
 
 /* Load the body/propulsion IMDs stats */
-static bool bufferSBPIMDLoad(const char *pBuffer, UDWORD size, void **ppData)
+static bool bufferSBPIMDLoad(const char *fileName, void **ppData)
 {
-	if (!loadBodyPropulsionIMDs(pBuffer, size))
+	if (!loadBodyPropulsionIMDs(fileName))
 	{
 		return false;
 	}
@@ -309,9 +307,9 @@ static bool bufferSBPIMDLoad(const char *pBuffer, UDWORD size, void **ppData)
 }
 
 /* Load the weapon sound stats */
-static bool bufferSWEAPSNDLoad(const char *pBuffer, UDWORD size, void **ppData)
+static bool bufferSWEAPSNDLoad(const char *fileName, void **ppData)
 {
-	if (!loadWeaponSounds(pBuffer, size))
+	if (!loadWeaponSounds(fileName))
 	{
 		return false;
 	}
@@ -322,11 +320,9 @@ static bool bufferSWEAPSNDLoad(const char *pBuffer, UDWORD size, void **ppData)
 }
 
 /* Load the Weapon Effect modifier stats */
-static bool bufferSWEAPMODLoad(const char *pBuffer, UDWORD size, void **ppData)
+static bool bufferSWEAPMODLoad(const char *fileName, void **ppData)
 {
-	calcDataHash((uint8_t *)pBuffer, size, DATA_SWEAPMOD);
-
-	if (!loadWeaponModifiers(pBuffer, size))
+	if (!loadWeaponModifiers(fileName))
 	{
 		return false;
 	}
@@ -1058,11 +1054,6 @@ struct RES_TYPE_MIN_BUF
 
 static const RES_TYPE_MIN_BUF BufferResourceTypes[] =
 {
-	{"SWEAPON", bufferSWEAPONLoad, NULL},
-	{"SPROPSND", bufferSPROPSNDLoad, NULL},
-	{"SBPIMD", bufferSBPIMDLoad, NULL},
-	{"SWEAPSND", bufferSWEAPSNDLoad, NULL},
-	{"SWEAPMOD", bufferSWEAPMODLoad, NULL},
 	{"STEMPL", bufferSTEMPLLoad, dataSTEMPLRelease},               //template and associated files
 	{"STEMPWEAP", bufferSTEMPWEAPLoad, NULL},
 	{"SSTRUCT", bufferSSTRUCTLoad, dataSSTRUCTRelease},            //structure stats and associated files
@@ -1093,6 +1084,8 @@ struct RES_TYPE_MIN_FILE
 static const RES_TYPE_MIN_FILE FileResourceTypes[] =
 {
 	{"WAV", dataAudioLoad, (RES_FREE)sound_ReleaseTrack},
+	{"SWEAPON", bufferSWEAPONLoad, dataReleaseStats},
+	{"SBPIMD", bufferSBPIMDLoad, dataReleaseStats},
 	{"SBRAIN", bufferSBRAINLoad, dataReleaseStats},
 	{"SSENSOR", bufferSSENSORLoad, dataReleaseStats},
 	{"SECM", bufferSECMLoad, dataReleaseStats},
@@ -1102,6 +1095,9 @@ static const RES_TYPE_MIN_FILE FileResourceTypes[] =
 	{"SPROPTYPES", bufferSPROPTYPESLoad, dataReleaseStats},
 	{"STERRTABLE", bufferSTERRTABLELoad, dataReleaseStats},
 	{"SBODY", bufferSBODYLoad, dataReleaseStats},
+	{"SWEAPSND", bufferSWEAPSNDLoad, dataReleaseStats},
+	{"SWEAPMOD", bufferSWEAPMODLoad, dataReleaseStats},
+	{"SPROPSND", bufferSPROPSNDLoad, dataReleaseStats},
 	{"AUDIOCFG", dataAudioCfgLoad, NULL},
 	{"ANI", dataAnimLoad, dataAnimRelease},
 	{"ANIMCFG", dataAnimCfgLoad, NULL},
