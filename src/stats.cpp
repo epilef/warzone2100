@@ -1850,6 +1850,7 @@ bool loadPropulsionTypes(const char *pFileName)
 /*Load the Terrain Table from the file exported from Access*/
 bool loadTerrainTable(const char *pFileName)
 {
+	unsigned int i;
 	UDWORD	terrainType;
 	QString propulsionType, speedFactor;
 
