@@ -27,6 +27,7 @@
 #include "lib/sound/audio.h"
 #include "lib/netplay/netplay.h"
 #include "qtscriptfuncs.h"
+#include "lib/ivis_opengl/tex.h"
 
 #include <QtScript/QScriptValue>
 #include <QtCore/QStringList>
@@ -34,6 +35,7 @@
 #include "action.h"
 #include "console.h"
 #include "design.h"
+#include "display3d.h"
 #include "map.h"
 #include "mission.h"
 #include "group.h"
@@ -57,6 +59,7 @@
 #include "mapgrid.h"
 #include "lighting.h"
 #include "atmos.h"
+#include "warcam.h"
 
 #define FAKE_REF_LASSAT 999
 #define ALL_PLAYERS -1
@@ -2346,6 +2349,7 @@ static QScriptValue js_countDroid(QScriptContext *context, QScriptEngine *engine
 	int player = me;
 	int quantity = 0;
 	int type = context->argument(0).toInt32();
+	SCRIPT_ASSERT(context, type <= DROID_ANY, "Bad droid type parameter");
 	if (context->argumentCount() > 1)
 	{
 		player = context->argument(1).toInt32();
@@ -2744,6 +2748,55 @@ static QScriptValue js_setWeather(QScriptContext *context, QScriptEngine *)
 	return QScriptValue();
 }
 
+//-- \subsection{setSky(texture page, wind speed, skybox scale)}
+//-- Change the skybox. Default values are "page-25", 0.5, and 10000.0. Returns true on success.
+static QScriptValue js_setSky(QScriptContext *context, QScriptEngine *)
+{
+	QString page = context->argument(0).toString();
+	float wind = context->argument(1).toNumber();
+	float scale = context->argument(2).toNumber();
+	bool found = iV_GetTexture(page.toUtf8().constData()) >= 0;
+	if (found)
+	{
+		setSkyBox(page.toUtf8().constData(), wind, scale);
+	}
+	return QScriptValue(found);
+}
+
+//-- \subsection{cameraSlide(x, y)}
+//-- Slide the camera over to the given position on the map.
+static QScriptValue js_cameraSlide(QScriptContext *context, QScriptEngine *)
+{
+	int x = context->argument(0).toNumber();
+	int y = context->argument(1).toNumber();
+	requestRadarTrack(x, y);
+	return QScriptValue();
+}
+
+//-- \subsection{cameraTrack(droid)}
+//-- Make the camera follow the given droid object around. Pass in a null object to stop.
+static QScriptValue js_cameraTrack(QScriptContext *context, QScriptEngine *)
+{
+	if (context->argument(0).isNull())
+	{
+		setWarCamActive(false);
+	}
+	else
+	{
+		QScriptValue droidVal = context->argument(0);
+		int id = droidVal.property("id").toInt32();
+		int player = droidVal.property("player").toInt32();
+		DROID *targetDroid = IdToDroid(id, player);
+		SCRIPT_ASSERT(context, targetDroid, "No such droid id %d belonging to player %d", id, player);
+		for (DROID *psDroid = apsDroidLists[selectedPlayer]; psDroid!=NULL; psDroid = psDroid->psNext)
+		{
+			psDroid->selected = (psDroid == targetDroid); // select only the target droid
+		}
+		setWarCamActive(true);
+	}
+	return QScriptValue();
+}
+
 // ----------------------------------------------------------------------------------------
 // Register functions with scripting system
 
@@ -2760,6 +2813,9 @@ bool registerFunctions(QScriptEngine *engine)
 	engine->globalObject().setProperty("setSunPosition", engine->newFunction(js_setSunPosition));
 	engine->globalObject().setProperty("setSunIntensity", engine->newFunction(js_setSunIntensity));
 	engine->globalObject().setProperty("setWeather", engine->newFunction(js_setWeather));
+	engine->globalObject().setProperty("setSky", engine->newFunction(js_setSky));
+	engine->globalObject().setProperty("cameraSlide", engine->newFunction(js_cameraSlide));
+	engine->globalObject().setProperty("cameraTrack", engine->newFunction(js_cameraTrack));
 
 	// horrible hacks follow -- do not rely on these being present!
 	engine->globalObject().setProperty("hackNetOff", engine->newFunction(js_hackNetOff));
