@@ -546,6 +546,22 @@ static QScriptValue js_enumLabels(QScriptContext *, QScriptEngine *engine)
 	return result;
 }
 
+//-- \subsection{addLabel(object, label)}
+//-- Add a label to a game object. If the game object already has a label, it is overwritten.
+static QScriptValue js_addLabel(QScriptContext *context, QScriptEngine *engine)
+{
+	struct labeltype value;
+	QScriptValue structVal = context->argument(0);
+	value.id = structVal.property("id").toInt32();
+	value.player = structVal.property("player").toInt32();
+	value.type = OBJ_DROID;
+	BASE_OBJECT *psObj = IdToPointer(value.id, value.player);
+	SCRIPT_ASSERT(context, psObj, "Object id %d not found belonging to player %d", value.id, value.player);
+	QString key = context->argument(1).toString();
+	labels.insert(key, value);
+	return QScriptValue();
+}
+
 //-- \subsection{label(key)}
 //-- Fetch something denoted by a label. A label refers to an area, a position or a \emph{game object} on 
 //-- the map defined using the map editor and stored together with the map. The only argument
@@ -569,7 +585,7 @@ static QScriptValue js_label(QScriptContext *context, QScriptEngine *engine)
 		if (p.type == SCRIPT_AREA)
 		{
 			ret.setProperty("x2", map_coord(p.p2.x), QScriptValue::ReadOnly);
-			ret.setProperty("xy", map_coord(p.p2.y), QScriptValue::ReadOnly);
+			ret.setProperty("y2", map_coord(p.p2.y), QScriptValue::ReadOnly);
 		}
 		else if (p.type == OBJ_DROID)
 		{
@@ -2729,9 +2745,21 @@ static QScriptValue js_setSunPosition(QScriptContext *context, QScriptEngine *)
 //-- Set the ambient, diffuse and specular colour intensities of the Sun lighting source.
 static QScriptValue js_setSunIntensity(QScriptContext *context, QScriptEngine *)
 {
-	float ambient[4] = { context->argument(0).toNumber(), context->argument(1).toNumber(), context->argument(2).toNumber(), 1.0f };
-	float diffuse[4] = { context->argument(3).toNumber(), context->argument(4).toNumber(), context->argument(5).toNumber(), 1.0f };
-	float specular[4] = { context->argument(6).toNumber(), context->argument(7).toNumber(), context->argument(8).toNumber(), 1.0f };
+	float ambient[4];
+	float diffuse[4];
+	float specular[4];
+	ambient[0] = context->argument(0).toNumber();
+	ambient[1] = context->argument(1).toNumber();
+	ambient[2] = context->argument(2).toNumber();
+	ambient[3] = 1.0f;
+	diffuse[0] = context->argument(3).toNumber();
+	diffuse[1] = context->argument(4).toNumber();
+	diffuse[2] = context->argument(5).toNumber();
+	diffuse[3] = 1.0f;
+	specular[0] = context->argument(6).toNumber();
+	specular[1] = context->argument(7).toNumber();
+	specular[2] = context->argument(8).toNumber();
+	specular[3] = 1.0f;
 	pie_Lighting0(LIGHT_AMBIENT, ambient);
 	pie_Lighting0(LIGHT_DIFFUSE, diffuse);
 	pie_Lighting0(LIGHT_SPECULAR, specular);
@@ -2805,6 +2833,7 @@ bool registerFunctions(QScriptEngine *engine)
 	// Register functions to the script engine here
 	engine->globalObject().setProperty("_", engine->newFunction(js_translate));
 	engine->globalObject().setProperty("label", engine->newFunction(js_label));
+	engine->globalObject().setProperty("addLabel", engine->newFunction(js_addLabel));
 	engine->globalObject().setProperty("enumLabels", engine->newFunction(js_enumLabels));
 	engine->globalObject().setProperty("enumGateways", engine->newFunction(js_enumGateways));
 	engine->globalObject().setProperty("enumTemplates", engine->newFunction(js_enumTemplates));
