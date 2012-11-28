@@ -2933,6 +2933,15 @@ static QScriptValue js_setConstructorLimit(QScriptContext *context, QScriptEngin
 	return QScriptValue();
 }
 
+//-- \subsection{setExperienceMultiplier(value)}
+//-- Set the multiplier to be applyed to experience to get ranks.
+static QScriptValue js_setExperienceMultiplier(QScriptContext *context, QScriptEngine *)
+{
+	int value = context->argument(0).toInt32();
+	setExpMult(value);
+	return QScriptValue();
+}
+
 //-- \subsection{hackAddMessage(message, type, player, immediate)}
 //-- See wzscript docs for info, to the extent any exist.
 static QScriptValue js_hackAddMessage(QScriptContext *context, QScriptEngine *)
@@ -3202,6 +3211,7 @@ bool registerFunctions(QScriptEngine *engine, QString scriptName)
 	engine->globalObject().setProperty("setDroidLimit", engine->newFunction(js_setDroidLimit));
 	engine->globalObject().setProperty("setCommanderLimit", engine->newFunction(js_setCommanderLimit));
 	engine->globalObject().setProperty("setConstructorLimit", engine->newFunction(js_setConstructorLimit));
+	engine->globalObject().setProperty("setExperienceMultiplier", engine->newFunction(js_setExperienceMultiplier));
 
 	// Functions that operate on the current player only
 	engine->globalObject().setProperty("centreView", engine->newFunction(js_centreView));

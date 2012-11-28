@@ -11,6 +11,7 @@ var lastHitTime = 0;
 function eventGameInit()
 {
 	hackNetOff();
+	setExperienceMultiplier(1);
 	for (var playnum = 0; playnum < maxPlayers; playnum++)
 	{
 		setDroidLimit(playnum, 150);

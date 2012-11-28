@@ -2389,6 +2389,13 @@ static const struct rankMap arrRank[] =
 	{512, 1024, N_("Hero")}
 };
 
+static int experienceMultiplier;
+
+void setExpMult(int value)
+{
+	experienceMultiplier = value;
+}
+
 unsigned int getDroidLevel(const DROID* psDroid)
 {
 	bool isCommander = (psDroid->droidType == DROID_COMMAND ||
@@ -2403,7 +2410,7 @@ unsigned int getDroidLevel(const DROID* psDroid)
 	{
 		const unsigned int requiredKills = isCommander ? arrRank[i].commanderKills : arrRank[i].kills;
 
-		if (numKills < requiredKills)
+		if (numKills*experienceMultiplier < requiredKills)
 		{
 			return i - 1;
 		}

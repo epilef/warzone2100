@@ -10,6 +10,7 @@ function eventStartLevel()
 	setDroidLimit(0, 100);
 	setCommanderLimit(0, 10);
 	setConstructorLimit(0, 15);
+	setExperienceMultiplier(1);
 
 	var structlist = enumStruct(me, HQ);
 	for (var i = 0; i < structlist.length; i++)

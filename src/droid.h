@@ -198,6 +198,7 @@ bool calcDroidMuzzleBaseLocation(DROID *psDroid, Vector3i *muzzle, int weapon_sl
 extern bool selectDroidByID(UDWORD id, UDWORD player);
 
 /* Droid experience stuff */
+void setExpMult(int value);
 extern unsigned int getDroidLevel(const DROID* psDroid);
 extern UDWORD	getDroidEffectiveLevel(DROID *psDroid);
 extern const char *getDroidLevelName(DROID *psDroid);
