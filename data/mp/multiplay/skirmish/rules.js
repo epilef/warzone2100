@@ -16,6 +16,7 @@ function eventGameInit()
 		setDroidLimit(playnum, 150);
 		setCommanderLimit(playnum, 10);
 		setConstructorLimit(playnum, 15);
+		setExperienceGain(playnum, 100);
 
 		enableStructure("A0CommandCentre", playnum);		// make structures available to build
 		enableStructure("A0LightFactory", playnum);

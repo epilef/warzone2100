@@ -59,6 +59,7 @@
 #include "lighting.h"
 #include "atmos.h"
 #include "warcam.h"
+#include "projectile.h"
 
 #define FAKE_REF_LASSAT 999
 #define ALL_PLAYERS -1
@@ -2903,6 +2904,14 @@ static QScriptValue js_getDroidLimit(QScriptContext *context, QScriptEngine *eng
 	return QScriptValue(getMaxDroids(engine->globalObject().property("me").toInt32()));
 }
 
+//-- \subsection{getExperienceGain(player)}
+//-- Get the % of experience this player droids are going to gain.
+static QScriptValue js_getExperienceGain(QScriptContext *context, QScriptEngine *)
+{
+	int player = context->argument(0).toInt32();
+	return QScriptValue(getExpGain(player));
+}
+
 //-- \subsection{setDroidLimit(player, value)}
 //-- Set the maximum number of droids that this player can produce.
 static QScriptValue js_setDroidLimit(QScriptContext *context, QScriptEngine *)
@@ -2930,6 +2939,16 @@ static QScriptValue js_setConstructorLimit(QScriptContext *context, QScriptEngin
 	int player = context->argument(0).toInt32();
 	int value = context->argument(1).toInt32();
 	setMaxConstructors(player, value);
+	return QScriptValue();
+}
+
+//-- \subsection{setExperienceGain(player, percent)}
+//-- Set the % of experience this player droids are going to gain.
+static QScriptValue js_setExperienceGain(QScriptContext *context, QScriptEngine *)
+{
+	int player = context->argument(0).toInt32();
+	int percent = context->argument(1).toInt32();
+	setExpGain(player, percent);
 	return QScriptValue();
 }
 
@@ -3199,9 +3218,11 @@ bool registerFunctions(QScriptEngine *engine, QString scriptName)
 	engine->globalObject().setProperty("removeBeacon", engine->newFunction(js_removeBeacon));
 	engine->globalObject().setProperty("getDroidProduction", engine->newFunction(js_getDroidProduction));
 	engine->globalObject().setProperty("getDroidLimit", engine->newFunction(js_getDroidLimit));
+	engine->globalObject().setProperty("getExperienceGain", engine->newFunction(js_getExperienceGain));
 	engine->globalObject().setProperty("setDroidLimit", engine->newFunction(js_setDroidLimit));
 	engine->globalObject().setProperty("setCommanderLimit", engine->newFunction(js_setCommanderLimit));
 	engine->globalObject().setProperty("setConstructorLimit", engine->newFunction(js_setConstructorLimit));
+	engine->globalObject().setProperty("setExperienceGain", engine->newFunction(js_setExperienceGain));
 
 	// Functions that operate on the current player only
 	engine->globalObject().setProperty("centreView", engine->newFunction(js_centreView));
