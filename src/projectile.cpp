@@ -69,6 +69,8 @@
 #define HOMINGINDIRECT_HEIGHT_MAX 450
 
 static int experienceGain[MAX_PLAYERS];
+static int burnTime[MAX_PLAYERS];
+static int burnDamage[MAX_PLAYERS];
 
 struct INTERVAL
 {
@@ -189,6 +191,8 @@ proj_InitSystem( void )
 	for (int x = 0; x<MAX_PLAYERS; ++x)
 	{
 		experienceGain[x] = 100;
+		burnTime[x] = 10000;
+		burnDamage[x] = 15;
 	}
 	return true;
 }
@@ -251,9 +255,29 @@ static uint32_t qualityFactor(DROID *psAttacker, DROID *psVictim)
 	return (powerRatio + pointsRatio) / 2;
 }
 
+void setBurnTime(int player, int time)
+{
+	burnTime[player] = time;
+}
+
+void setBurnDamage(int player, int damage)
+{
+	burnDamage[player] = damage;
+}
+
 void setExpGain(int player, int gain)
 {
 	experienceGain[player] = gain;
+}
+
+int getBurnTime(int player)
+{
+	return burnTime[player];
+}
+
+int getBurnDamage(int player)
+{
+	return burnDamage[player];
 }
 
 int getExpGain(int player)

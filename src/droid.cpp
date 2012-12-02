@@ -858,7 +858,7 @@ void droidUpdate(DROID *psDroid)
 	{
 		// The burnStart has been set, but is not from the previous tick, so we must be out of the fire.
 		psDroid->burnDamage = 0;  // Reset burn damage done this tick.
-		if (psDroid->burnStart + BURN_TIME < gameTime)
+		if (psDroid->burnStart + getBurnTime(psDroid->player) < gameTime)
 		{
 			// Finished burning.
 			psDroid->burnStart = 0;
@@ -866,7 +866,7 @@ void droidUpdate(DROID *psDroid)
 		else
 		{
 			// do burn damage
-			droidDamage(psDroid, BURN_DAMAGE, WC_HEAT, WSC_FLAME, gameTime - deltaGameTime/2 + 1, true);
+			droidDamage(psDroid, getBurnDamage(psDroid->player), WC_HEAT, WSC_FLAME, gameTime - deltaGameTime/2 + 1, true);
 		}
 	}
 

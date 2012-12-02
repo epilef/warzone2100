@@ -2906,11 +2906,27 @@ static QScriptValue js_getDroidLimit(QScriptContext *context, QScriptEngine *eng
 }
 
 //-- \subsection{getExperienceModifier(player)}
-//-- Get the % of experience this player droids are going to gain.
+//-- Get the % of experience this player droids are going to gain, default 100.
 static QScriptValue js_getExperienceModifier(QScriptContext *context, QScriptEngine *)
 {
 	int player = context->argument(0).toInt32();
 	return QScriptValue(getExpGain(player));
+}
+
+//-- \subsection{getBurnDamage(player)}
+//-- Get the amount of damage burning droids are receiving, default 15.
+static QScriptValue js_getBurnDamage(QScriptContext *context, QScriptEngine *)
+{
+	int player = context->argument(0).toInt32();
+	return QScriptValue(getBurnDamage(player));
+}
+
+//-- \subsection{getBurnTime(player)}
+//-- Get the amount of time droid receive burn damage, default 10000.
+static QScriptValue js_getBurnTime(QScriptContext *context, QScriptEngine *)
+{
+	int player = context->argument(0).toInt32();
+	return QScriptValue(getBurnTime(player));
 }
 
 //-- \subsection{setExperienceModifier(player, percent)}
@@ -2972,6 +2988,26 @@ static QScriptValue js_setConstructorLimit(QScriptContext *context, QScriptEngin
 	int player = context->argument(0).toInt32();
 	int value = context->argument(1).toInt32();
 	setMaxConstructors(player, value);
+	return QScriptValue();
+}
+
+//-- \subsection{setBurnDamage(player, damage)}
+//-- Set the amount of damage burning droids are receiving.
+static QScriptValue js_setBurnDamage(QScriptContext *context, QScriptEngine *)
+{
+	int player = context->argument(0).toInt32();
+	int damage = context->argument(1).toInt32();
+	setBurnDamage(player, damage);
+	return QScriptValue();
+}
+
+//-- \subsection{setBurnTime(player, time)}
+//-- Set the amount of time droids receive burn damage.
+static QScriptValue js_setBurnTime(QScriptContext *context, QScriptEngine *)
+{
+	int player = context->argument(0).toInt32();
+	int time = context->argument(1).toInt32();
+	setBurnTime(player, time);
 	return QScriptValue();
 }
 
@@ -3242,10 +3278,14 @@ bool registerFunctions(QScriptEngine *engine, QString scriptName)
 	engine->globalObject().setProperty("getDroidProduction", engine->newFunction(js_getDroidProduction));
 	engine->globalObject().setProperty("getDroidLimit", engine->newFunction(js_getDroidLimit));
 	engine->globalObject().setProperty("getExperienceModifier", engine->newFunction(js_getExperienceModifier));
+	engine->globalObject().setProperty("getBurnTime", engine->newFunction(js_getBurnTime));
+	engine->globalObject().setProperty("getBurnDamage", engine->newFunction(js_getBurnDamage));
 	engine->globalObject().setProperty("setDroidLimit", engine->newFunction(js_setDroidLimit));
 	engine->globalObject().setProperty("setCommanderLimit", engine->newFunction(js_setCommanderLimit));
 	engine->globalObject().setProperty("setConstructorLimit", engine->newFunction(js_setConstructorLimit));
 	engine->globalObject().setProperty("setExperienceModifier", engine->newFunction(js_setExperienceModifier));
+	engine->globalObject().setProperty("setBurnTime", engine->newFunction(js_setBurnTime));
+	engine->globalObject().setProperty("setBurnDamage", engine->newFunction(js_setBurnDamage));
 
 	// Functions that operate on the current player only
 	engine->globalObject().setProperty("centreView", engine->newFunction(js_centreView));
