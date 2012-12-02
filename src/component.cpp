@@ -1030,7 +1030,7 @@ void displayComponentObject(DROID *psDroid)
 		objectShimmy( (BASE_OBJECT*) psDroid );
 	}
 
-	if (psDroid->lastHitWeapon == WSC_EMP && graphicsTime - psDroid->timeLastHit < EMP_DISABLE_TIME)
+	if (psDroid->lastHitWeapon == WSC_EMP && graphicsTime - psDroid->timeLastHit < getEmpDisableTime(psDroid->player))
 	{
 		Vector3i position;
 

@@ -262,9 +262,10 @@ bool combFire(WEAPON *psWeap, BASE_OBJECT *psAttacker, BASE_OBJECT *psTarget, in
 
 		if (psTarget->lastHitWeapon == WSC_EMP)
 		{
-			int empTime = EMP_DISABLE_TIME - (gameTime - psTarget->timeLastHit);
-			CLIP(empTime, 0, EMP_DISABLE_TIME);
-			if (empTime >= EMP_DISABLE_TIME * 9/10)
+			int playerEmpTime = getEmpDisableTime(psTarget->player);
+			int empTime = playerEmpTime - (gameTime - psTarget->timeLastHit);
+			CLIP(empTime, 0, playerEmpTime);
+			if (empTime >= playerEmpTime * 9/10)
 			{
 				flightTime = 0;  /* Just hit.  Assume they'll get hit again */
 			}

@@ -402,7 +402,7 @@ static SDWORD targetAttackWeight(BASE_OBJECT *psTarget, BASE_OBJECT *psAttacker,
 		/* If attacking with EMP try to avoid targets that were already "EMPed" */
 		if(bEmpWeap &&
 			(targetDroid->lastHitWeapon == WSC_EMP) &&
-			((gameTime - targetDroid->timeLastHit) < EMP_DISABLE_TIME))		//target still disabled
+			((gameTime - targetDroid->timeLastHit) < getEmpDisableTime(targetDroid->player)))		//target still disabled
 		{
 			attackWeight /= EMP_DISABLED_PENALTY_F;
 		}

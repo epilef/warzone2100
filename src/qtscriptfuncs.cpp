@@ -2913,6 +2913,14 @@ static QScriptValue js_getExperienceModifier(QScriptContext *context, QScriptEng
 	return QScriptValue(getExpGain(player));
 }
 
+//-- \subsection{getEmpDisableTime(player)}
+//-- Get how long a droid is disabled for when its been attacked by an EMP weapon, default 10000.
+static QScriptValue js_getEmpDisableTime(QScriptContext *context, QScriptEngine *)
+{
+	int player = context->argument(0).toInt32();
+	return QScriptValue(getEmpDisableTime(player));
+}
+
 //-- \subsection{getBurnDamage(player)}
 //-- Get the amount of damage burning droids are receiving, default 15.
 static QScriptValue js_getBurnDamage(QScriptContext *context, QScriptEngine *)
@@ -2966,6 +2974,16 @@ static QScriptValue js_setDroidLimit(QScriptContext *context, QScriptEngine *)
 		setMaxDroids(player, value);
 		break;
 	}
+	return QScriptValue();
+}
+
+//-- \subsection{setEmpDisableTime(player, value)}
+//-- Set how long a droid is disabled for when its been attacked by an EMP weapon.
+static QScriptValue js_setEmpDisableTime(QScriptContext *context, QScriptEngine *)
+{
+	int player = context->argument(0).toInt32();
+	int value = context->argument(1).toInt32();
+	setEmpDisableTime(player, value);
 	return QScriptValue();
 }
 
@@ -3280,12 +3298,14 @@ bool registerFunctions(QScriptEngine *engine, QString scriptName)
 	engine->globalObject().setProperty("getExperienceModifier", engine->newFunction(js_getExperienceModifier));
 	engine->globalObject().setProperty("getBurnTime", engine->newFunction(js_getBurnTime));
 	engine->globalObject().setProperty("getBurnDamage", engine->newFunction(js_getBurnDamage));
+	engine->globalObject().setProperty("getEmpDisableTime", engine->newFunction(js_getEmpDisableTime));
 	engine->globalObject().setProperty("setDroidLimit", engine->newFunction(js_setDroidLimit));
 	engine->globalObject().setProperty("setCommanderLimit", engine->newFunction(js_setCommanderLimit));
 	engine->globalObject().setProperty("setConstructorLimit", engine->newFunction(js_setConstructorLimit));
 	engine->globalObject().setProperty("setExperienceModifier", engine->newFunction(js_setExperienceModifier));
 	engine->globalObject().setProperty("setBurnTime", engine->newFunction(js_setBurnTime));
 	engine->globalObject().setProperty("setBurnDamage", engine->newFunction(js_setBurnDamage));
+	engine->globalObject().setProperty("setEmpDisableTime", engine->newFunction(js_setEmpDisableTime));
 
 	// Functions that operate on the current player only
 	engine->globalObject().setProperty("centreView", engine->newFunction(js_centreView));

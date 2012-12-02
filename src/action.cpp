@@ -732,7 +732,7 @@ void actionUpdateDroid(DROID *psDroid)
 	//if the droid has been attacked by an EMP weapon, it is temporarily disabled
 	if (psDroid->lastHitWeapon == WSC_EMP)
 	{
-		if (gameTime - psDroid->timeLastHit > EMP_DISABLE_TIME)
+		if (gameTime - psDroid->timeLastHit > getEmpDisableTime(psDroid->player))
 		{
 			//the actionStarted time needs to be adjusted
 			psDroid->actionStarted += (gameTime - psDroid->timeLastHit);

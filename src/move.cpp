@@ -59,6 +59,7 @@
 #include "mission.h"
 #include "drive.h"
 #include "qtscript.h"
+#include "projectile.h"
 
 /* max and min vtol heights above terrain */
 #define	VTOL_HEIGHT_MIN				250
@@ -2325,7 +2326,7 @@ void moveUpdateDroid(DROID *psDroid)
 	// If the droid has been attacked by an EMP weapon, it is temporarily disabled
 	if (psDroid->lastHitWeapon == WSC_EMP)
 	{
-		if (gameTime - psDroid->timeLastHit < EMP_DISABLE_TIME)
+		if (gameTime - psDroid->timeLastHit < getEmpDisableTime(psDroid->player))
 		{
 			// Get out without updating
 			return;

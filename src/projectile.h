@@ -52,9 +52,11 @@ PROJECTILE *proj_GetNext(void);		///< Get next projectile in the list.
 
 void	proj_FreeAllProjectiles(void);	///< Free all projectiles in the list.
 
+void setEmpDisableTime(int player, int gain);
 void setExpGain(int player, int gain);
 void setBurnTime(int player, int time);
 void setBurnDamage(int player, int damage);
+int getEmpDisableTime(int player);
 int getExpGain(int player);
 int getBurnTime(int player);
 int getBurnDamage(int player);

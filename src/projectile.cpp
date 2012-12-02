@@ -71,6 +71,7 @@
 static int experienceGain[MAX_PLAYERS];
 static int burnTime[MAX_PLAYERS];
 static int burnDamage[MAX_PLAYERS];
+static int empDisableTime[MAX_PLAYERS];
 
 struct INTERVAL
 {
@@ -193,6 +194,7 @@ proj_InitSystem( void )
 		experienceGain[x] = 100;
 		burnTime[x] = 10000;
 		burnDamage[x] = 15;
+		empDisableTime[x] = 10000;
 	}
 	return true;
 }
@@ -255,6 +257,11 @@ static uint32_t qualityFactor(DROID *psAttacker, DROID *psVictim)
 	return (powerRatio + pointsRatio) / 2;
 }
 
+void setEmpDisableTime(int player, int time)
+{
+	empDisableTime[player] = time;
+}
+
 void setBurnTime(int player, int time)
 {
 	burnTime[player] = time;
@@ -268,6 +275,11 @@ void setBurnDamage(int player, int damage)
 void setExpGain(int player, int gain)
 {
 	experienceGain[player] = gain;
+}
+
+int getEmpDisableTime(int player)
+{
+	return empDisableTime[player];
 }
 
 int getBurnTime(int player)

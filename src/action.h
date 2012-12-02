@@ -40,9 +40,6 @@ const char* getDroidActionName(DROID_ACTION action);
 #define MIN_SULK_TIME (1500)		// 1.5 sec
 #define MAX_SULK_TIME (4000)		// 4 secs
 
-/** This is how long a droid is disabled for when its been attacked by an EMP weapon. */
-#define EMP_DISABLE_TIME (10000)     // 10 secs
-
 /** How far away the repair droid can be from the damaged droid to function. */
 #define REPAIR_RANGE		(TILE_UNITS * TILE_UNITS * 4)
 
